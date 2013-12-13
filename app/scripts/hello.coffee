@@ -46,15 +46,15 @@ class EntitiesHome extends $.RestClient
 
     createAndLog: (resource, entity) ->
         @[resource].create(entity)
-            .always (entityId) => @readAndLog resource, entityId
+            .done (entityId) => @readAndLog resource, entityId
 
     readAndLog: (resource, id) ->
-        @[resource].read(id).always (entity) =>
+        @[resource].read(id).done (entity) =>
             @log "#{resource} ##{id}:", entity
 
 home = new EntitiesHome "http://localhost/api/", "ew0KICAiSXYiOiAiR0xnM1paZkVqcnJhQlZCWE50cjlsUT09IiwNCiAgIkRhdGEiOiAidU1SbVhjSUtUNmk2STF1cjNUaEpRMFh5cnpaZkRkQThKWlFjbDh3V2x5MW8xcGVLZTZWWlpiS3VVWFBqeVFjbzNrbXg3WjU5ZXZCVWZYVElCU0xFTlE9PSINCn0="
 
-home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
+home.createAndLog("products", description: "Tea pot").done (teaPotId) ->
     hiddenTreeWarehouse =
         name: "Hidden tree warehouse"
         stocks: [
@@ -62,11 +62,11 @@ home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
             quantity: 25
         ]
 
-    home.createAndLog("warehouses", hiddenTreeWarehouse).always (warehouseId) ->
+    home.createAndLog("warehouses", hiddenTreeWarehouse).done (warehouseId) ->
         theMadHatter =
             description: "The mad hatter"
 
-        home.createAndLog("contacts", theMadHatter).always (theMadHatterId) ->
+        home.createAndLog("contacts", theMadHatter).done (theMadHatterId) ->
             salesOrder =
                 contact: theMadHatterId
                 lines: [
@@ -76,7 +76,7 @@ home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
                 ]
                 wareHouse: warehouseId
 
-            home.createAndLog("salesOrders", salesOrder).always (salesOrderId) ->
+            home.createAndLog("salesOrders", salesOrder).done (salesOrderId) ->
                 shipment =
                     date: "2013-12-13"
                     products: [
@@ -89,7 +89,7 @@ home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
                     amount: 190.5
 
                 $.when(home.salesOrders.shipments.create(salesOrderId, shipment), home.salesOrders.payments.create(salesOrderId, payment))
-                    .always ->
+                    .done ->
                         home.readAndLog "salesOrders", salesOrderId
                         home.readAndLog "warehouses", warehouseId
                         home.readAndLog "contacts", theMadHatterId
