@@ -89,3 +89,10 @@ body {
         border-bottom: 0;
     }
 }
+
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: brown; }
+.null { color: blue; }
+.key { color: black; }
