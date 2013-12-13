@@ -32,6 +32,7 @@ class EntitiesHome extends $.RestClient
         @add resource for resource in @resources()
 
         @salesOrders.add 'shipments'
+        @salesOrders.add 'payments'
 
         @logger = new Logger()
 
@@ -55,7 +56,7 @@ home = new EntitiesHome "http://localhost/api/", "ew0KICAiSXYiOiAiR0xnM1paZkVqcn
 
 home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
     hiddenTreeWarehouse =
-        description: "Hidden tree warehouse"
+        name: "Hidden tree warehouse"
         stocks: [
             product: teaPotId
             quantity: 25
@@ -83,7 +84,12 @@ home.createAndLog("products", description: "Tea pot").always (teaPotId) ->
                         quantity: 20
                     ]
 
-                home.salesOrders.shipments.create(salesOrderId, shipment).always ->
-                    home.readAndLog "salesOrders", salesOrderId
-                    home.readAndLog "warehouses", warehouseId
-                    home.readAndLog "contacts", theMadHatterId
+                payment =
+                    date: "2013-12-13"
+                    amount: 190.5
+
+                $.when(home.salesOrders.shipments.create(salesOrderId, shipment), home.salesOrders.payments.create(salesOrderId, payment))
+                    .always ->
+                        home.readAndLog "salesOrders", salesOrderId
+                        home.readAndLog "warehouses", warehouseId
+                        home.readAndLog "contacts", theMadHatterId
