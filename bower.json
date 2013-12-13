@@ -1,0 +1,10 @@
+{
+  "name": "sales-orders-creator",
+  "version": "0.0.0",
+  "dependencies": {
+    "sass-bootstrap": "~3.0.0",
+    "jquery": "~1.10.2",
+    "jquery.rest": "~1.0.0"
+  },
+  "devDependencies": {}
+}
