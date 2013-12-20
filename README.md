@@ -14,6 +14,8 @@ Easily create SalesOrder on Parsimotion
 npm install -g yo
 npm install
 bower install
+#instalar ruby
+gem install compass
 ```
 
 ## Initial setup
