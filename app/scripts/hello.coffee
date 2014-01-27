@@ -52,20 +52,21 @@ class EntitiesHome extends $.RestClient
         @[resource].read(id).done (entity) =>
             @log "#{resource} ##{id}:", entity
 
-home = new EntitiesHome "http://localhost/api/", "ew0KICAiSXYiOiAiR0xnM1paZkVqcnJhQlZCWE50cjlsUT09IiwNCiAgIkRhdGEiOiAidU1SbVhjSUtUNmk2STF1cjNUaEpRMFh5cnpaZkRkQThKWlFjbDh3V2x5MW8xcGVLZTZWWlpiS3VVWFBqeVFjbzNrbXg3WjU5ZXZCVWZYVElCU0xFTlE9PSINCn0="
+home = new EntitiesHome "http://localhost/api/", "ew0KICAiSXYiOiAiWjdvYWJ6UHZCRHplWmhzbDFpMlErQT09IiwNCiAgIkRhdGEiOiAiWTVWdUMxcnZsWEpIWk00R081QVIxQT09Ig0KfQ=="
 
-home.createAndLog("products", description: "Tea pot").done (teaPotId) ->
-    hiddenTreeWarehouse =
-        name: "Hidden tree warehouse"
-        stocks: [
-            product: teaPotId
+hiddenTreeWarehouse =
+    name: "Hidden tree warehouse"
+
+home.createAndLog("warehouses", hiddenTreeWarehouse).done (warehouseId) ->
+    teaPot =
+        description: "Tea pot"
+        warehouses: [
+            warehouse: warehouseId
             quantity: 25
         ]
-
-    home.createAndLog("warehouses", hiddenTreeWarehouse).done (warehouseId) ->
+    home.createAndLog("products", teaPot).done (teaPotId) ->
         theMadHatter =
             description: "The mad hatter"
-
         home.createAndLog("contacts", theMadHatter).done (theMadHatterId) ->
             salesOrder =
                 contact: theMadHatterId
@@ -88,8 +89,22 @@ home.createAndLog("products", description: "Tea pot").done (teaPotId) ->
                     date: "2013-12-13"
                     amount: 190.5
 
-                $.when(home.salesOrders.shipments.create(salesOrderId, shipment), home.salesOrders.payments.create(salesOrderId, payment))
-                    .done ->
-                        home.readAndLog "salesOrders", salesOrderId
-                        home.readAndLog "warehouses", warehouseId
-                        home.readAndLog "contacts", theMadHatterId
+
+                purchasesOrder =
+                    contact: theMadHatterId
+                    date: '11/18/2013'
+                    lines: [
+                        product: teaPotId
+                        quantity: 100
+                        price: 9
+                    ]
+                    wareHouse: warehouseId
+
+                home.createAndLog("purchaseorders", purchasesOrder).done (purchaseorderId) ->
+
+                    $.when(home.salesOrders.shipments.create(salesOrderId, shipment), home.salesOrders.payments.create(salesOrderId, payment))
+                        .done ->
+                            home.readAndLog "salesOrders", salesOrderId
+                            home.readAndLog "purchaseorders", purchaseorderId
+                            home.readAndLog "warehouses", warehouseId
+                            home.readAndLog "contacts", theMadHatterId
